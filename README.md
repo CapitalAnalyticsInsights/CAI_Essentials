@@ -1,2 +1,2 @@
 # CAI_Essentials
-L_CAI_Essentials provides the essential functions needed for enhancing coding in pine-script. The functions are used repeatedly and thus making a library saves time (without having to re-write the lines).
+CAI_Essentials is an opensourced library that provides essential functions for enhancing custom Pine Script coding. These functions are used repeatedly, so creating a library saves time by avoiding the need to rewrite the same lines of code. The library will expand in adding features (added functions) to enhance the coding as frequenly as it needs to be.
