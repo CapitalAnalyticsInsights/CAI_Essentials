@@ -1,0 +1,150 @@
+// CAI_Essentials (Library)
+// Supplementary Functions: Color Highlight
+// Color Highlights
+export litmus_color_highlight(float input_sOn, float reference_value) =>
+	// Criteria: 2 Inputs
+	// 1/2 Input = Float (i.e., Decimals)
+	// 2/2 Input = Float (i.e., Decimals)
+	value_return = if input_sOn == reference_value
+		color.new(color.yellow,70)
+// Color Highlight based on value 1 vs value 2 size
+export litmus_color(float value1, float value2)=>
+	value_color = if value1 > value2
+		color.green
+	else
+		color.red	
+// Display the value with permited show or not (sOn) input
+export show_or_not(bool input_sOn, float input_value)=>
+	// Criteria: 2 Inputs
+	// 1/2 Input = Bool
+	// 2/2 Input = Float (i.e., Decimals)
+	value_return = if input_sOn == true
+		input_value
+//	Display the value with permited show or not (sOn) input
+export show_or_not_numeric (float input_sOn, float input_value)=>
+	// Criteria: 2 Inputs
+	// 1/2 Input = Float (i.e., Decimals)
+	// 2/2 Input = Float (i.e., Decimals)
+	value_return = if input_sOn == 0.0
+		input_value	
+// Display the Highlight for selected timeframe
+export dyanmic_timeframe_highlights(string input_timeframe)=>
+	// input_time_frame_select = input.timeframe("Disable","Highlights Timeframes:",["Auto","Disable","D","W","M","3M","12M", "January", "February","March","April","May","June","July","August","September","October","November","December"])
+	// Timeframe Highlight Function
+	// If the input timeframe, say, "Auto", the value goes up to 1M by default for daily and weekly
+	// If the input timeframe, say, "January", highlights happen
+	// If the input timeframe, say, "D", highlights daily
+    highlight = if input_timeframe == "Auto"
+        if timeframe.period == "D"
+            timeframe.change("M")
+        else if timeframe.period == "W"
+            timeframe.change("M")
+        else if timeframe.period == "M"
+            timeframe.change("12M")            
+        else if timeframe.period == "60"
+            timeframe.change("D")
+		else if timeframe.period == "15"
+            timeframe.change("D")
+    else if input_timeframe == "Disable"
+        na
+    // Manual
+    else if input_timeframe == "D"
+        timeframe.change("D")
+    else if input_timeframe == "W"
+        timeframe.change("W")
+    else if input_timeframe == "M"
+        timeframe.change("M")   
+    else if input_timeframe == "3M"
+        timeframe.change("3M")        
+    else if input_timeframe == "12M"
+        timeframe.change("12M")                 
+    // Monthly Highlights            
+    else if input_timeframe == "January"
+        month(time_close) == 1
+    else if input_timeframe == "February"
+        month(time_close) == 2
+    else if input_timeframe == "March"
+        month(time_close) == 3
+    else if input_timeframe == "April"
+        month(time_close) == 4
+    else if input_timeframe == "May"
+        month(time_close) == 5
+    else if input_timeframe == "June"
+        month(time_close) == 6
+    else if input_timeframe == "July"
+        month(time_close) == 7
+    else if input_timeframe == "August"
+        month(time_close) == 8
+    else if input_timeframe == "September"
+        month(time_close) == 9
+    else if input_timeframe == "October"
+        month(time_close) == 10
+    else if input_timeframe == "November"
+        month(time_close) == 11
+    else if input_timeframe == "December"
+        month(time_close) == 12           
+//
+// Time Value of Money (TVOM)
+// Finding Present Value (PV)
+export pv(float iy, float n,float fv)=>
+    int_fix = 1+(iy/100)				// Percent to Decimal Conversion
+    exponent = math.pow(int_fix,n)
+    present_value = fv/(exponent)
+// Finding the Future Value (FV )
+export fv(float iy, float n, float pv)=>
+    int_fix = 1+(iy/100)				// Percent to Decimal Conversion
+    exponent = math.pow(int_fix,n)
+    future_value = pv*exponent
+// Finding the Yield (IY)
+export iy(float n,float pv,float fv)=>
+    value = fv/pv
+    iy = (math.pow(value, 1/n)-1)*100	// Decimal to Percent Conversion
+// Finding the Duration (N)
+export n(float iy, float pv, float fv)=>
+	int_fix = math.log(1+(iy/100))				// Percent to Decimal Conversion
+	numerator = math.log(fv/pv)
+	n = numerator/int_fix
+// Dynamic Function that combines all the previous lines: Time Value of Money (TVOM)
+export tvom(float input_n, float input_iy, float input_pv, float input_fv)=>
+	// input.string("I/Y", "Pick What to do?", options=["I/Y",'N',"PV","FV"])
+	n = input_n
+	iy = input_iy
+	pv = input_pv
+	fv = input_fv
+	if iy == 0 // Finding the Interest Rate
+		iy := iy(n,pv, input_fv)
+		[n,iy,pv,fv]
+	else if pv == 0 // Finding the Present Value
+		pv := pv(input_iy, input_n, input_fv)
+		[n,iy,pv,fv]
+	else if fv == 0 // Fiding the Future Value
+		fv := fv(input_iy, input_n, input_pv)
+		[n,iy,pv,fv]
+	else if n == 0 // Finding the Period (N)
+		n := n(iy,pv,fv)
+		[n,iy,pv,fv]
+//
+// Demo: dyanmic_timeframe_highlights function
+input_time_frame_select = input.string("Disable","Highlights Timeframes:",["Auto","Disable","D","W","M","3M","12M", "January", "February","March","April","May","June","July","August","September","October","November","December"])
+variable_timeframe = dyanmic_timeframe_highlights(input_time_frame_select)
+bgcolor(variable_timeframe ? (color.new(color.white,50)):na)
+
+// Demo: Litmus Color, Show or Not; functions
+ma_close_9 = ta.sma(close,9)
+ma_color = litmus_color(close,ma_close_9)
+input_show_or_not = input.bool(true, "Show MA9 or not", tooltip = "Checked == Show")
+ma_close_9_ =show_or_not(input_show_or_not, ma_close_9)
+plot(ma_close_9_, "MA9", color = ma_color)
+
+// Demo: TVOM
+// Inputs
+input_n = input.float(1, "N", tooltip = "Term (N)")
+input_iy = input.float(1, "IY (%)", tooltip = "Interest Rate (I/Y)")
+input_pv = input.float(1, "PV", tooltip = "Present Value (PV)")
+input_fv = input.float(1, "FV", tooltip = "Future Value (FV)")
+// Calculations
+[n,iy,pv,fv] = tvom(input_n,input_iy,input_pv,input_fv)
+plot(n, "N", color= color.white)
+plot(iy, "N", color= color.yellow)
+plot(pv, "PV", color= color.orange)
+plot(fv, "FV", color= color.red)
