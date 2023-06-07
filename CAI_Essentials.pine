@@ -13,20 +13,142 @@ export litmus_color(float value1, float value2)=>
 		color.green
 	else
 		color.red	
+// Custumn litmus color with custumn color        
+export litmus_color_customn(float value1, float value2, color color1, color color2, color color3)=>
+    value_color = if value1 > value2
+		color1
+	else if value2 > value1
+		color2	
+    else
+        color3
+//   
+export litmus_color_bool(bool true_or_not, color true_color, color false_color)=>
+    value_color = if true_or_not == true
+        true_color
+    else
+        false_color
+//
+export notify_changes(series float change)=>
+    // Any Changes gives the "*" for table uses, and the Table Tool Tip for i.e., "'1 D ago'"
+    comment = if change != change[1]
+        "1D Ago"
+    else if change != change[2]
+        "2D Ago"
+    else if change != change[3]
+        "3D Ago"
+    value_dots = if change > change[1]
+        "↑"
+    else if change > change[2]
+        "↑↑"
+    else if change > change[3]
+        "↑↑↑"
+    else if change < change[1]
+        "↓"
+    else if change < change[2]
+        "↓↓"
+    else if change < change[3]
+        "↓↓↓"                
+    [value_dots,comment]
+//
+export changed_values(float value)=>
+    changed_value = ta.change(value)
+    changed_value_string = str.tostring(changed_value)+"%"
+    if changed_value != 0.0
+        [changed_value,changed_value_string]
+    else if changed_value[1] != 0.0
+        [changed_value[1],changed_value_string[1]]
+    else if changed_value[2] != 0.0
+        [changed_value[2],changed_value_string[2]]       
+//       
+export percentage_error (float measured_value, float theoretical_value)=>
+    percent_error = (math.abs(measured_value-theoretical_value)/math.abs(theoretical_value))*100
+//
+export percentage_change (float measured_value, float theoretical_value)=>
+    percent_error = ((measured_value-theoretical_value)/math.abs(theoretical_value))*100
+//    
+export select_flag()=>        
+   // Countries
+    au = "🇦🇺"       // Australia
+    ca = "🇨🇦"       // Canada
+    eu = "🇪🇺"       // European Union
+    us = "🇺🇸"       // USA
+    ind = "🇮🇳"      // India
+    ja = "🇯🇵"       // Japan
+    ch = "🇨🇭"       // Switzerland
+    ru  = "🇷🇺"      // Russia
+    gb  = "🇬🇧"      // Great Britain
+    tr  = "🇹🇷"      // Turkey
+    sg  = "🇸🇬"      // Singapore
+    za  = "🇿🇦"      // South Africa
+    nz  = "🇳🇿"      // New Zealand
+    cn  = "🇨🇳"      // China
+    // Country Abbreviation. NIH. https://www.ncbi.nlm.nih.gov/books/NBK7249/
+    // doubleChecking with the ticker location
+    dynamic_flag = if syminfo.currency == currency.USD   // United States of America
+        us                                                  // United States of America
+    else if syminfo.currency == currency.CAD                // Canada
+        ca                                                  // Canada
+    else if syminfo.currency == currency.EUR                // Europe
+        eu                                                  // Europe
+    else if syminfo.currency == currency.JPY                // Japan
+        ja                                                  // Japan
+    else if syminfo.currency == currency.AUD                // Australia
+        au                                                  // Australia
+    else if syminfo.currency == currency.CHF                // Switzerland
+        ch                                                  // Switzerland
+    else if syminfo.currency == currency.RUB                // Russia
+        ru                                                  // Russia
+    else if syminfo.currency == currency.GBP                // Great Brittain
+        gb                                                  // Great Brittain
+    else if syminfo.currency == currency.TRY                // Turkey
+        tr                                                  // Turkey
+    else if syminfo.currency == currency.INR                // India
+        ind                                                 // India
+    else if syminfo.currency == currency.SGD                // Singapore
+        sg                                                  // Singapore
+    else if syminfo.currency == currency.ZAR                // South Africa
+        za                                                  // South Africa    
+    else if syminfo.currency == currency.NZD                // New Zealand
+        nz                                                  // New Zealand       
+    // else if syminfo.currency == currency.CNH                // China [Unsupported]
+        // nz                                                  // China  [Unsupported]       
+    else
+        us
 // Display the value with permited show or not (sOn) input
+export show_or_not_numbers(bool input_sOn, float input_value)=>
+	// Criteria: 2 Inputs
+	// 1/2 Input = Bool
+	// 2/2 Input = Float (i.e., Decimals)
+	value_return = if input_sOn == true
+		input_value
+//        
 export show_or_not(bool input_sOn, float input_value)=>
 	// Criteria: 2 Inputs
 	// 1/2 Input = Bool
 	// 2/2 Input = Float (i.e., Decimals)
 	value_return = if input_sOn == true
 		input_value
+//                
+export show_or_not_bool(bool input_sOn, bool input_value)=>
+	// Criteria: 2 Inputs
+	// 1/2 Input = Bool
+	// 2/2 Input = Float (i.e., Decimals)
+	value_return = if input_sOn == true
+		input_value        
 //	Display the value with permited show or not (sOn) input
-export show_or_not_numeric (float input_sOn, float input_value)=>
+export show_or_not_number_number (float input_sOn, float input_value)=>
 	// Criteria: 2 Inputs
 	// 1/2 Input = Float (i.e., Decimals)
 	// 2/2 Input = Float (i.e., Decimals)
 	value_return = if input_sOn == 0.0
 		input_value	
+//        
+export adjust_dividends(simple bool adjust_dividends)=>
+	if adjust_dividends == true
+		ticker.modify(syminfo.tickerid,timeframe.period,  adjustment = adjustment.dividends)
+	else
+		syminfo.tickerid
+//        
 // Display the Highlight for selected timeframe
 export dyanmic_timeframe_highlights(string input_timeframe)=>
 	// input_time_frame_select = input.timeframe("Disable","Highlights Timeframes:",["Auto","Disable","D","W","M","3M","12M", "January", "February","March","April","May","June","July","August","September","October","November","December"])
@@ -84,6 +206,89 @@ export dyanmic_timeframe_highlights(string input_timeframe)=>
     else if input_timeframe == "December"
         month(time_close) == 12           
 //
+export auto_length() =>
+    if timeframe.period  == "D"
+        251
+    else if timeframe.period == "W"
+        52
+    else if timeframe.period == "M"
+        12
+    else if timeframe.period == "3M"
+        4
+    else if timeframe.period == "6M"
+        2
+    else if timeframe.period == "12M"
+        1
+    else
+        251
+//
+export full_auto_length(float days_in_a_year)=>
+    // Usually the length "D" goes back to 251 for an assumed 1 year.
+    return_length =  if days_in_a_year == 251
+        auto_length()
+    else
+        days_in_a_year
+    // Usage Syntax:
+    // input_length_manual = input.int(251, "How Long Should the length go back?", tooltip = "Default = 251, for full Auto")
+    // return_length = full_auto_length(input_length_manual)    
+//
+export percent_change(float value1) =>
+    value_return = (ta.change(value1)/value1[1])*100
+//    
+export beta_c_b_r(float base_value_close, float reference_value_close, float days_in_a_year, float input_length)=>
+    // B = Base, C = Close, R = Reference
+    le_length = math.round(full_auto_length(days_in_a_year)*input_length) // Length Calculation; i.e., 5M based 5 Year forBeta Value
+    // Percent Calculation
+    base_value_returns_percent = (ta.change(base_value_close)/base_value_close[1])*100
+    reference_value_returns_percent =(ta.change(reference_value_close)/reference_value_close[1])*100
+    // Statistics
+    correlations_br = ta.correlation(base_value_returns_percent,reference_value_returns_percent,le_length)
+    base_value_stdev = ta.stdev(base_value_returns_percent, le_length)
+    reference_value_stdev = ta.stdev(reference_value_returns_percent, le_length)
+
+    beta_br = math.round((base_value_stdev/reference_value_stdev)*correlations_br,2)
+    [correlations_br,beta_br]
+//
+// Capital Asset Price Model
+export capm(series float bond_yield, series float beta, series float index_return)=>
+    // CAPM = (Risk-Free Rate) + Beta*((Market Returns) - (Risk-Free Rate)) | Source: (Berk et al., p. 406 - 413) | Berk, J., Demarzo, P., Harford, J., Stangeland, D., and Marosi, A. Fundamentals of Corporate Finance. 2020. Pearson Canada. Third Canadian Edition.
+    // Note: Risk Free (Implies, the bond is held until maturity; remember about the banks going bankrupt for having to sell the bonds during interest rate hike)
+    // Supplementary Note Source: https://www.cnbc.com/2023/03/10/first-republic-leads-regional-bank-rout-as-silicon-valley-bank-crisis-raises-fears-about-bond-losses.html
+    CAPM = (bond_yield/100)+beta*((index_return/100)-(bond_yield/100))
+    CAPM := CAPM*100
+//
+// *****************************************************************  MATHEMATICS
+//
+// export mean_geo(float geo_value, int input_length_value) =>
+//     // This will only work with for 1 Year timeframe for now
+// 	geometric_mean = 1.0
+// 	geo_value_percent = percent_change(geo_value)
+// 	if timeframe.period == "12M"
+// 		for i = 1 to input_length_value
+// 			geometric_mean := geometric_mean*(1+(geo_value_percent[i]/100))
+// 		geometric_mean := (math.pow(geometric_mean,(1/input_length_value))-1)*100
+// 	else
+// 		0
+//
+export mean_geo_growth(float geo_value, int input_length_value) =>
+    // This will only work with for 1 Year timeframe for now
+    // Note: This does not support current Year
+	geometric_mean = 1.0
+	geo_value_percent = percent_change(geo_value)
+	if timeframe.period == "12M"
+		for i = 1 to input_length_value -1
+			geometric_mean := geometric_mean*(1+(geo_value_percent[i]/100))
+		geometric_mean := (math.pow(geometric_mean,(1/input_length_value))-1)*100
+	else
+		0
+//
+export mean_arith_growth(float arith_value, int input_length_value) =>
+    // This will only work with for 1 Year timeframe for now
+    // Note: This does not support current Year
+	arith_value_percent = percent_change(arith_value)
+	arithmetic_growth_value = ta.sma(nz(arith_value_percent[1]),input_length_value)
+	if timeframe.period == "12M"
+		arithmetic_growth_value
 // Time Value of Money (TVOM)
 // Finding Present Value (PV)
 export pv(float iy, float n,float fv)=>
@@ -123,17 +328,233 @@ export tvom(float input_n, float input_iy, float input_pv, float input_fv)=>
 	else if n == 0 // Finding the Period (N)
 		n := n(iy,pv,fv)
 		[n,iy,pv,fv]
+//        
+export anualized_returns (int input_date_1, int input_date_2, float annual_returns_percent)=>
+	// Length Correction: Human Language Translation
+	// 1 is added because we want to include the date 1 (Lesser)
+	how_long = (input_date_2 - input_date_1)+1
+	// Table Setup
+	table_metrics = table.new(position.middle_left,4,how_long+3,color.white)
+	
+	// Empty Values Tally
+	annum_returns_geo_mean = 1.0
+	annum_returns_ari_mean = 0.0
+	
+	if timeframe.period != "12M"
+		table.cell(table_metrics,0,0, "YOU NEED TO CHANGE THE TIMEFRAME TO '12M'")
+		// This is needed because I have not figured yet how to use the "D" timeframe to invoke the "12M" changes yet
+	else
+		if year(time) == input_date_2
+			table.cell(table_metrics,0,0, "This Does not Support Current Year")
+		else
+			// Table Supplement: Headers
+			table.cell(table_metrics,0,0,"Years")
+			table.cell(table_metrics,1,0,"%")
+			for i = 1 to how_long
+				changes = ((annual_returns_percent[i])/100)+1
+				annum_returns_geo_mean:= annum_returns_geo_mean*changes
+				annum_returns_ari_mean:= annum_returns_ari_mean+annual_returns_percent[i]
+				table.cell(table_metrics,0,i, str.tostring(input_date_2-i+1), tooltip = str.tostring(i))
+				table.cell(table_metrics,1,i, str.tostring(math.round(annual_returns_percent[i],2)),tooltip ="Arithmetic: "+str.tostring(annum_returns_ari_mean)+"Geometric: "+str.tostring(annum_returns_geo_mean), text_color = litmus_color(annual_returns_percent[i],0))
+			annum_returns_geo_mean:= ((math.pow(annum_returns_geo_mean,(1/how_long)))-1)*100
+			annum_returns_ari_mean:=annum_returns_ari_mean/how_long
+			table.cell(table_metrics,0,how_long+2, "Mean: ", bgcolor = color.new(color.teal,50))
+			table.cell(table_metrics,1,how_long+2, "Geometric", bgcolor = color.new(color.teal,50))
+			table.cell(table_metrics,2,how_long+2,str.tostring(math.round(annum_returns_geo_mean,2)), bgcolor  = litmus_color(annum_returns_geo_mean,0))
+			table.cell(table_metrics,3,how_long+2,"%", bgcolor = color.new(color.teal,50))
+			table.cell(table_metrics,0,how_long+1, "Mean: ", bgcolor = color.new(color.blue,50))
+			table.cell(table_metrics,1,how_long+1, "Arithmetic", bgcolor = color.new(color.blue,50))
+			table.cell(table_metrics,2,how_long+1,str.tostring(math.round(annum_returns_ari_mean,2)), bgcolor = litmus_color(annum_returns_ari_mean,0))
+			table.cell(table_metrics,3,how_long+1,"%", bgcolor = color.new(color.blue,50))
+	[annum_returns_ari_mean,annum_returns_geo_mean]
+//    
+export us_recession(float us_rec_value)=>
+    //USREC
+    recession_return = us_rec_value >= 1
 //
-// Demo: dyanmic_timeframe_highlights function
-input_time_frame_select = input.string("Disable","Highlights Timeframes:",["Auto","Disable","D","W","M","3M","12M", "January", "February","March","April","May","June","July","August","September","October","November","December"])
-variable_timeframe = dyanmic_timeframe_highlights(input_time_frame_select)
-bgcolor(variable_timeframe ? (color.new(color.white,50)):na)
+// Fundamental-Ish 
+export select_country()=>
+    // Source:
+    // What economic data is available in pine? Accessed On Jul 1, 2022. https://www.tradingview.com/chart/s7pJ0Zi5/?solution=43000665359
+    // this will select the country automatically 
+    // Countries
+    au = "AU"       // Australia
+    ca = "CA"       // Canada
+    eu = "EU"       // European Union
+    us = "US"       // USA
+    ind = "IN"      // India
+    ja = "JP"       // Japan
+    ch = "CH"       // Switzerland
+    ru  = "RU"      // Russia
+    gb  = "GB"      // Great Britain
+    tr  = "TR"      // Turkey
+    sg  = "SG"      // Singapore
+    za  = "ZA"      // South Africa
+    nz  = "NZ"      // New Zealand
+    cn  = "CN"      // China
+    // Country Abbreviation. NIH. https://www.ncbi.nlm.nih.gov/books/NBK7249/
+    // doubleChecking with the ticker location
+    locationDynamic = if syminfo.currency == currency.USD   // United States of America
+        us                                                  // United States of America
+    else if syminfo.currency == currency.CAD                // Canada
+        ca                                                  // Canada
+    else if syminfo.currency == currency.EUR                // Europe
+        eu                                                  // Europe
+    else if syminfo.currency == currency.JPY                // Japan
+        ja                                                  // Japan
+    else if syminfo.currency == currency.AUD                // Australia
+        au                                                  // Australia
+    else if syminfo.currency == currency.CHF                // Switzerland
+        ch                                                  // Switzerland
+    else if syminfo.currency == currency.RUB                // Russia
+        ru                                                  // Russia
+    else if syminfo.currency == currency.GBP                // Great Brittain
+        gb                                                  // Great Brittain
+    else if syminfo.currency == currency.TRY                // Turkey
+        tr                                                  // Turkey
+    else if syminfo.currency == currency.INR                // India
+        ind                                                 // India
+    else if syminfo.currency == currency.SGD                // Singapore
+        sg                                                  // Singapore
+    else if syminfo.currency == currency.ZAR                // South Africa
+        za                                                  // South Africa    
+    else if syminfo.currency == currency.NZD                // New Zealand
+        nz                                                  // New Zealand       
+    // else if syminfo.currency == currency.CNH                // China [Unsupported]
+        // nz                                                  // China  [Unsupported]       
+    else
+        us
+    country=locationDynamic
+// 
+export gdp_id ()=>   
+    // Quarterly Gross Domestic Product
+    quarterly_gdp = select_country() + "GDPQQ"
+//
+export pdg_id()=>
+    // Private Debt to GDP
+        // Unsupported
+    pdg = if syminfo.currency == currency.EUR or syminfo.currency == currency.RUB or  syminfo.currency == currency.INR or syminfo.currency == currency.SGD or syminfo.currency == currency.ZAR or syminfo.currency == currency.NZD
+        na
+    else
+        select_country()+"PDG"
+//
+export hdg_id()=>
+    // Household Debt to GDP
+    // No-unsupported based on currency as of concern May 15, 2023.
+    hdg = select_country()+"HDG"
+//
+export gdg_id()=>
+    // [Government or Public] Debt to GDP
+    // No-unsupported based on currency as of concern May 15, 2023.
+    gdg = select_country()+"GDG"
+//
+export interests_rate_id()=>
+    // Interest Name Abbreviation
+    cbFundsRate = select_country()+"INTR"
+//  
+export cpi_id()=>
+    consumer_price_index_percent = select_country()+"IRYY"
+    // source: Consumer Price Index. Trading Economics. https://tradingeconomics.com/country-list/inflation-rate
+export real_interest_rate(series float interest_rate, series float inflation_rate)=>
+    // Real Interest Rate
+    real_rate = (interest_rate/100-inflation_rate/100)/(1+inflation_rate/100)*100        
 
+// 52Week Metrics: Using Array as a mediator
+export high_low_metrics(float closer, int length)=>
+    list_length_metrics = array.new_float()
+    for i = 0 to length-1
+        array.push(list_length_metrics,closer[i])
+    list_max = array.max(list_length_metrics)
+    list_min = array.min(list_length_metrics)
+    [list_min,list_max]
+//
+export stop_limit_loss()=>
+    // New Thinking in Technical Analysis [Trading models from the masters]. Rick Bensignor. 2000.
+    // The function is based on the source where the concept is presented but the code is improvised.
+    // Retracements (p. 23-24)
+    // p. 23
+    stop_value = if low[1] <= low[2]
+        low[1]
+    else if low[1] > low[2]
+        low[2]
+    return_stop_value = math.round(stop_value,2)
+//        
+export trailing_stop_limit_loss()=>   
+    // New Thinking in Technical Analysis [Trading models from the masters]. Rick Bensignor. 2000.
+    // The function is based on the source where the concept is presented but the code is improvised.
+    // Retracements (p. 23-24) but with my customn "maximizing"temporary gain
+    // p. 23    
+    stop_limit_value = if low[1] >= low[2]
+        low[1]
+    else if low[1] < low[2]
+        low[2]     
+//
+export limit_entry()=>
+    // New Thinking in Technical Analysis [Trading models from the masters]. Rick Bensignor. 2000.
+    // The function is based on the source where the concept is presented but the code is improvised.
+    // Retracements (p. 23-24)
+    // p. 23
+    stop_limit_buy = if high[1] >= high[2] 
+        high[1]
+    else if high[2] > high [1]
+        high[2]     
+//
+export entry_color()=>
+    // Source Material: New Thinking in Technical Analysis [Trading models from the masters]. Rick Bensignor. 2000.
+    // The function is based on the source where the concept is presented but the code is improvised.
+    // Three types of trades (p. 23)
+    ma9 = ta.sma(close,9)
+    if close > ma9
+        if close[1] > ma9[1]
+            color.green
+        else
+            color.aqua
+    else
+        color.black
+//        
+export table_show_or_not(bool show_momentum_table_entry_exit, float stop_loss, float trailing_stop_loss, float value_higher)=>//lowest_low,highest_high
+    // Source Material: New Thinking in Technical Analysis [Trading models from the masters]. Rick Bensignor. 2000.
+    // The function is based on the source where the concept is presented but the code is improvised.
+    // Three types of trades (p. 23)
+    // Close > High[2] and close  > High[1]
+    // Placing stop from the lowest vaue (from the previous low, and the low from two days ago)
+    entry_color = entry_color()
+    if show_momentum_table_entry_exit == true
+        stop_loss_potential_table = table.new(position = position.bottom_right, columns = 2, rows = 4, bgcolor = color.black, border_width = 1)
+        table.cell(stop_loss_potential_table, 0, 0,"Current Close", text_color = color.gray)
+        table.cell(stop_loss_potential_table, 1, 0,str.tostring(close), text_color = color.gray)
+        table.cell(stop_loss_potential_table, 0, 1,"Potential Entry", text_color = color.black, bgcolor = color.new(color.white,0))
+        table.cell(stop_loss_potential_table, 1, 1,str.tostring(math.round(value_higher,2)), text_color = entry_color, bgcolor = color.new(color.white,0))
+        table.cell(stop_loss_potential_table, 0, 2,"Trailing Stop Loss", text_color = color.white)
+        table.cell(stop_loss_potential_table, 1, 2,str.tostring(math.round(trailing_stop_loss,2)), text_color = color.white)        
+        table.cell(stop_loss_potential_table, 0, 3,"Stop Loss", text_color = color.black, bgcolor = color.new(color.white,0))
+        table.cell(stop_loss_potential_table, 1, 3,str.tostring(stop_loss), text_color = color.black, bgcolor = color.new(color.white,0))
+        for i = 0 to 3
+            table.cell_set_tooltip(stop_loss_potential_table, 0, i, tooltip = "Be aware of the momemtum")
+            table.cell_set_tooltip(stop_loss_potential_table, 1, i, tooltip = "Never Ever Buy on Earnings Call!")
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ******************************************************************* Demo *********************************************************************
 // Demo: Litmus Color, Show or Not; functions
 ma_close_9 = ta.sma(close,9)
 ma_color = litmus_color(close,ma_close_9)
 input_show_or_not = input.bool(true, "Show MA9 or not", tooltip = "Checked == Show")
-ma_close_9_ =show_or_not(input_show_or_not, ma_close_9)
+ma_close_9_ =show_or_not_numbers(input_show_or_not, ma_close_9)
 plot(ma_close_9_, "MA9", color = ma_color)
 
 // Demo: TVOM
@@ -148,3 +569,62 @@ plot(n, "N", color= color.white)
 plot(iy, "N", color= color.yellow)
 plot(pv, "PV", color= color.orange)
 plot(fv, "FV", color= color.red)
+
+// Demo: dyanmic_timeframe_highlights function
+input_time_frame_select = input.string("Disable","Highlights Timeframes:",["Auto","Disable","D","W","M","3M","12M", "January", "February","March","April","May","June","July","August","September","October","November","December"])
+variable_timeframe = dyanmic_timeframe_highlights(input_time_frame_select)
+bgcolor(variable_timeframe ? (color.new(color.white,50)):na)
+
+// Demo: Returning Length (Use case: 52Week metrics or Beta Calculation)
+input_days_in_a_year = input.int(251, "Open Days in 1 Year (i.e., 251)", tooltip = "Default = 251, for full Auto")
+days_in_a_year = full_auto_length(input_days_in_a_year)
+// plot(days_in_a_year)
+beta_length = input.int(5, "Beta Length (i.e., '5Y Monthly", tooltip = "Default = 5, for full Auto")
+index_close = request.security("SPX", timeframe.period,close)
+[correlations_br,beta_br] = beta_c_b_r(close,index_close,days_in_a_year,beta_length)
+plot(beta_br, "Beta", color= color.red)
+plot(correlations_br, "Correlations", color=color.green)
+
+// Demo: Interest Rate Change
+interest_rate = request.security(interests_rate_id(),"D",close)
+[notification_intr,notification_intr_tooltip] = notify_changes(interest_rate)
+[changed,changed_str] = changed_values(interest_rate) // Difference
+int_change_color = litmus_color_customn(interest_rate,interest_rate[1], color.red, color.green, color.yellow) // color
+
+interest_rate_table = table.new(position = position.bottom_right, rows = 6, columns = 2, bgcolor = color.new(color.blue,30), border_width=1)
+table.cell(interest_rate_table, row = 0, column = 0, text = select_country()+" "+ select_flag() + " Microeconomy", text_color = color.yellow)
+table.cell(interest_rate_table, row = 0, column = 1, text = "%", text_color = color.yellow)
+
+table.cell(interest_rate_table, row = 1, column = 0, text =  select_country()+" INT "+ notification_intr, text_color = color.black, bgcolor = int_change_color, tooltip = notification_intr_tooltip)
+table.cell(interest_rate_table, row = 1, column = 1, text = str.tostring(interest_rate), text_color = color.white, tooltip = changed_str)
+
+// Demo: Yearly Returns
+input_adj_div = input.bool(true, "Adjust for Dividends")
+ticker_name = adjust_dividends(input_adj_div)
+delta_anum = request.security(ticker_name, timeframe.period,(ta.change(close)/close[1])*100)
+input_date_from = input.int(2020,"From (Year):",1990, 2023)
+input_date_to = input.int(2023,"To (Year):",1990,2023)
+anualized_returns(input_date_from,input_date_to,delta_anum)
+
+// Demo: US Official Recessions
+us_recession_value = request.security("USREC", timeframe.period,close)
+us_recession = us_recession(us_recession_value)
+recession_color = litmus_color_bool(us_recession,color.red,na)
+bgcolor(us_recession? recession_color:recession_color)
+// ***************************************************** How to use the library? *********************************************************
+// 
+// => import fourkhansolo/CAI_Essentials/7 as essentials
+// then, simply use the "essential" phrase prior invoking the desired function.
+// i.e., color_close_greater_than_open = essentials.litmus_color(close,open), the variable (color) will be based on close > open (turing green)
+
+// Interest Rate Example: 
+// => import fourkhansolo/CAI_Essentials/7 as essentials
+// interest_rate = request.security(essentials.interests_rate_id(),"D",close)
+// //
+// [notification_intr,notification_intr_tooltip] = essentials.notify_changes(interest_rate) // *
+// //
+// [changed,changed_str] = essentials.changed_values(interest_rate) // Difference
+// //
+// int_change_color = essentials.litmus_color_customn(interest_rate,interest_rate[1], color.red, color.green, color.yellow) // color
+// plot(changed)
+// plot(interest_rate,"Interest Rate", color = int_change_color)
